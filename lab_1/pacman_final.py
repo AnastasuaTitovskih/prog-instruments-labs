@@ -6,6 +6,7 @@ from enum import Enum
 
 
 class Direction(Enum):
+
     DOWN = -90
     RIGHT = 0
     UP = 90
@@ -14,12 +15,14 @@ class Direction(Enum):
 
 
 class ScoreType(Enum):
+
     COOKIE = 10
     POWERUP = 50
     GHOST = 400
 
 
 class GhostBehaviour(Enum):
+
     CHASE = 1
     SCATTER = 2
 
@@ -33,6 +36,7 @@ def translate_maze_to_screen(in_coords, in_size=32):
 
 
 class GameObject:
+
     def __init__(self, in_surface, x, y,
                  in_size: int, in_color=(255, 0, 0),
                  is_circle: bool = False):
@@ -73,11 +77,13 @@ class GameObject:
 
 
 class Wall(GameObject):
+
     def __init__(self, in_surface, x, y, in_size: int, in_color=(0, 0, 255)):
         super().__init__(in_surface, x * in_size, y * in_size, in_size, in_color)
 
 
 class GameRenderer:
+
     def __init__(self, in_width: int, in_height: int):
         pygame.init()
         self._width = in_width
@@ -258,6 +264,7 @@ class GameRenderer:
 
 
 class MovableObject(GameObject):
+
     def __init__(self, in_surface, x, y, in_size: int, in_color=(255, 0, 0), is_circle: bool = False):
         super().__init__(in_surface, x, y, in_size, in_color, is_circle)
         self.current_direction = Direction.NONE
@@ -313,6 +320,7 @@ class MovableObject(GameObject):
 
 
 class Hero(MovableObject):
+
     def __init__(self, in_surface, x, y, in_size: int):
         super().__init__(in_surface, x, y, in_size, (255, 255, 0), False)
         self.last_non_colliding_position = (0, 0)
@@ -404,6 +412,7 @@ class Hero(MovableObject):
 
 
 class Ghost(MovableObject):
+
     def __init__(self, in_surface, x, y, in_size: int, in_game_controller, sprite_path="images/ghost_fright.png"):
         super().__init__(in_surface, x, y, in_size)
         self.game_controller = in_game_controller
@@ -464,16 +473,19 @@ class Ghost(MovableObject):
         super(Ghost, self).draw()
 
 class Cookie(GameObject):
+
     def __init__(self, in_surface, x, y):
         super().__init__(in_surface, x, y, 4, (255, 255, 0), True)
 
 
 class Powerup(GameObject):
+
     def __init__(self, in_surface, x, y):
         super().__init__(in_surface, x, y, 8, (255, 255, 255), True)
 
 
 class Pathfinder:
+    
     def __init__(self, in_arr):
         cost = np.array(in_arr, dtype=np.bool_).tolist()
         self.pf = tcod.path.AStar(cost=cost, diagonal=0)
@@ -484,6 +496,7 @@ class Pathfinder:
 
 
 class PacmanGameController:
+    
     def __init__(self):
         self.ascii_maze = [
             "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",

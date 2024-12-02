@@ -129,8 +129,18 @@ class GameRenderer:
 
             self.display_text(f"[Score: {self._score}]  [Lives: {self._lives}]")
 
-            if self._hero is None: self.display_text("YOU DIED", (self._width / 2 - 256, self._height / 2 - 256), 100)
-            if self.get_won(): self.display_text("YOU WON", (self._width / 2 - 256, self._height / 2 - 256), 100)
+            if self._hero is None: 
+                self.display_text(
+                    "YOU DIED", 
+                    (self._width / 2 - 256, self._height / 2 - 256), 
+                    100
+                )
+            if self.get_won(): 
+                self.display_text(
+                    "YOU WON", 
+                    (self._width / 2 - 256, self._height / 2 - 256), 
+                    100
+                )
             pygame.display.flip()
             self._clock.tick(in_fps)
             self._screen.fill(black)

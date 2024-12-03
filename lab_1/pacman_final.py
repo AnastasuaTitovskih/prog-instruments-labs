@@ -484,7 +484,9 @@ class Ghost(MovableObject):
         player_position = translate_screen_to_maze(
             in_ghost._renderer.get_hero_position())
         current_maze_coord = translate_screen_to_maze(in_ghost.get_position())
-        path = self.game_controller.p.get_path(current_maze_coord[1], current_maze_coord[0], player_position[1],
+        path = self.game_controller.p.get_path(current_maze_coord[1], 
+                                               current_maze_coord[0],
+                                               player_position[1],
                                                player_position[0])
 
         new_path = [translate_maze_to_screen(item) for item in path]

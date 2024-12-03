@@ -118,6 +118,13 @@ class GameRenderer:
         self._current_phase = 0
 
     def tick(self, in_fps: int):
+        """
+        Обрабатывает один кадр игры, обновляет состояние игры, рисует объекты, 
+        обновляет текстовый интерфейс и управляет таймерами.
+
+        Параметры:
+        in_fps (int): Количество кадров в секунду.
+        """
         black = (0, 0, 0)
 
         self.handle_mode_switch()
@@ -149,6 +156,10 @@ class GameRenderer:
         print("Game over")
 
     def handle_mode_switch(self):
+        """
+        Переключает текущий режим поведения привидений (CHASE/SCATTER) 
+        в зависимости от времени.
+        """
         current_phase_timings = self._modes[self._current_phase]
         print(f"Current phase: {str(self._current_phase)}, current_phase_timings: {str(current_phase_timings)}")
         scatter_timing = current_phase_timings[0]

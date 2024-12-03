@@ -64,6 +64,18 @@ def load_csv_data(file_path: str) -> list:
         reader = csv.reader(file, delimiter=';')
         next(reader)
         return [line for line in reader]
+    
+def check_row_validity(row: list, regex_dict: dict) -> bool:
+    """
+    Проверяет строку по регулярным выражениям.
+    """
+    return all(re.match(regex, field) for regex, field in zip(regex_dict.values(), row))
+
+def get_invalid_rows(data: list, regex_dict: dict) -> list:
+    """
+    Возвращает индексы строк, которые не прошли проверку.
+    """
+    return [index for index, row in enumerate(data) if not check_row_validity(row, regex_dict)]
 
 if __name__ == "__main__":
     loaded_data = load_csv_data(INPUT_PATH)

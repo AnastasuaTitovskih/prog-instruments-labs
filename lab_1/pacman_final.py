@@ -138,13 +138,13 @@ class GameRenderer:
 
             if self._hero is None: 
                 self.display_text(
-                    "YOU DIED", 
+                    'YOU DIED', 
                     (self._width / 2 - 256, self._height / 2 - 256), 
                     100
                 )
             if self.get_won(): 
                 self.display_text(
-                    "YOU WON", 
+                    'YOU WON', 
                     (self._width / 2 - 256, self._height / 2 - 256), 
                     100
                 )
@@ -161,7 +161,7 @@ class GameRenderer:
         в зависимости от времени.
         """
         current_phase_timings = self._modes[self._current_phase]
-        print(f"Current phase: {str(self._current_phase)}, current_phase_timings: {str(current_phase_timings)}")
+        print(f'Current phase: {str(self._current_phase)}, current_phase_timings: {str(current_phase_timings)}')
         scatter_timing = current_phase_timings[0]
         chase_timing = current_phase_timings[1]
 
@@ -345,8 +345,8 @@ class Hero(MovableObject):
     def __init__(self, in_surface, x, y, in_size: int):
         super().__init__(in_surface, x, y, in_size, (255, 255, 0), False)
         self.last_non_colliding_position = (0, 0)
-        self.open = pygame.image.load("images/paku.png")
-        self.closed = pygame.image.load("images/man.png")
+        self.open = pygame.image.load('images/paku.png')
+        self.closed = pygame.image.load('images/man.png')
         self.image = self.open
         self.mouth_open = True
 
@@ -520,37 +520,37 @@ class PacmanGameController:
     
     def __init__(self):
         self.ascii_maze = [
-            "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-            "XP           XX            X",
-            "X XXXX XXXXX XX XXXXX XXXX X",
-            "X XXXXOXXXXX XX XXXXXOXXXX X",
-            "X XXXX XXXXX XX XXXXX XXXX X",
-            "X                          X",
-            "X XXXX XX XXXXXXXX XX XXXX X",
-            "X XXXX XX XXXXXXXX XX XXXX X",
-            "X      XX    XX    XX      X",
-            "XXXXXX XXXXX XX XXXXX XXXXXX",
-            "XXXXXX XXXXX XX XXXXX XXXXXX",
-            "XXXXXX XX     G    XX XXXXXX",
-            "XXXXXX XX XXX  XXX XX XXXXXX",
-            "XXXXXX XX X      X XX XXXXXX",
-            "   G      X      X          ",
-            "XXXXXX XX X      X XX XXXXXX",
-            "XXXXXX XX XXXXXXXX XX XXXXXX",
-            "XXXXXX XX    G     XX XXXXXX",
-            "XXXXXX XX XXXXXXXX XX XXXXXX",
-            "XXXXXX XX XXXXXXXX XX XXXXXX",
-            "X            XX            X",
-            "X XXXX XXXXX XX XXXXX XXXX X",
-            "X XXXX XXXXX XX XXXXX XXXX X",
-            "X   XX       G        XX   X",
-            "XXX XX XX XXXXXXXX XX XX XXX",
-            "XXX XX XX XXXXXXXX XX XX XXX",
-            "X      XX    XX    XX      X",
-            "X XXXXXXXXXX XX XXXXXXXXXX X",
-            "X XXXXXXXXXX XX XXXXXXXXXX X",
-            "X   O                 O    X",
-            "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+            'XP           XX            X',
+            'X XXXX XXXXX XX XXXXX XXXX X',
+            'X XXXXOXXXXX XX XXXXXOXXXX X',
+            'X XXXX XXXXX XX XXXXX XXXX X',
+            'X                          X',
+            'X XXXX XX XXXXXXXX XX XXXX X',
+            'X XXXX XX XXXXXXXX XX XXXX X',
+            'X      XX    XX    XX      X',
+            'XXXXXX XXXXX XX XXXXX XXXXXX',
+            'XXXXXX XXXXX XX XXXXX XXXXXX',
+            'XXXXXX XX     G    XX XXXXXX',
+            'XXXXXX XX XXX  XXX XX XXXXXX',
+            'XXXXXX XX X      X XX XXXXXX',
+            '   G      X      X          ',
+            'XXXXXX XX X      X XX XXXXXX',
+            'XXXXXX XX XXXXXXXX XX XXXXXX',
+            'XXXXXX XX    G     XX XXXXXX',
+            'XXXXXX XX XXXXXXXX XX XXXXXX',
+            'XXXXXX XX XXXXXXXX XX XXXXXX',
+            'X            XX            X',
+            'X XXXX XXXXX XX XXXXX XXXX X',
+            'X XXXX XXXXX XX XXXXX XXXX X',
+            'X   XX       G        XX   X',
+            'XXX XX XX XXXXXXXX XX XX XXX',
+            'XXX XX XX XXXXXXXX XX XX XXX',
+            'X      XX    XX    XX      X',
+            'X XXXXXXXXXX XX XXXXXXXXXX X',
+            'X XXXXXXXXXX XX XXXXXXXXXX X',
+            'X   O                 O    X',
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXX',
         ]
 
         self.numpy_maze = []
@@ -559,10 +559,10 @@ class PacmanGameController:
         self.reachable_spaces = []
         self.ghost_spawns = []
         self.ghost_colors = [
-            "images/ghost.png",
-            "images/ghost_pink.png",
-            "images/ghost_orange.png",
-            "images/ghost_blue.png"
+            'images/ghost.png',
+            'images/ghost_pink.png',
+            'images/ghost_orange.png',
+            'images/ghost_blue.png'
         ]
         self.size = (0, 0)
         self.convert_maze_to_numpy()
@@ -582,16 +582,16 @@ class PacmanGameController:
             self.size = (len(row), x + 1)
             binary_row = []
             for y, column in enumerate(row):
-                if column == "G":
+                if column == 'G':
                     self.ghost_spawns.append((y, x))
 
-                if column == "X":
+                if column == 'X':
                     binary_row.append(0)
                 else:
                     binary_row.append(1)
                     self.cookie_spaces.append((y, x))
                     self.reachable_spaces.append((y, x))
-                    if column == "O":
+                    if column == 'O':
                         self.powerup_spaces.append((y, x))
 
             self.numpy_maze.append(binary_row)

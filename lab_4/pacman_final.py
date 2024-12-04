@@ -3,6 +3,7 @@ import numpy as np
 import tcod
 import random
 from enum import Enum
+from loguru import logger
 
 
 class Direction(Enum):
@@ -36,6 +37,7 @@ class GameObject:
     def __init__(self, in_surface, x, y,
                  in_size: int, in_color=(255, 0, 0),
                  is_circle: bool = False):
+        logger.info(f"Создание GameObject: координаты=({x}, {y}), размер={in_size}")
         self._size = in_size
         self._renderer: GameRenderer = in_surface
         self._surface = in_surface._screen
@@ -65,6 +67,7 @@ class GameObject:
         return pygame.Rect(self.x, self.y, self._size, self._size)
 
     def set_position(self, in_x, in_y):
+        logger.info(f"Изменение позиции GameObject на ({in_x}, {in_y})")
         self.x = in_x
         self.y = in_y
 
@@ -79,6 +82,7 @@ class Wall(GameObject):
 
 class GameRenderer:
     def __init__(self, in_width: int, in_height: int):
+        logger.info(f"Инициализация GameRenderer: ширина={in_width}, высота={in_height}")
         pygame.init()
         self._width = in_width
         self._height = in_height
@@ -151,6 +155,7 @@ class GameRenderer:
         pygame.time.set_timer(self._kokoro_end_event, 15000)  # 15s
 
     def add_game_object(self, obj: GameObject):
+        logger.info(f"Добавление игрового объекта: {obj}")
         self._game_objects.append(obj)
 
     def add_cookie(self, obj: GameObject):
@@ -200,6 +205,7 @@ class GameRenderer:
         if self._lives == 0: self.end_game()
 
     def display_text(self, text, in_position=(32, 0), in_size=30):
+        logger.info(f"Отображение текста: '{text}' в позиции {in_position}")
         font = pygame.font.SysFont('Arial', in_size)
         text_surface = font.render(text, False, (255, 255, 255))
         self._screen.blit(text_surface, in_position)
@@ -564,6 +570,7 @@ class PacmanGameController:
 
 
 if __name__ == "__main__":
+    logger.info("Запуск игры")
     unified_size = 32
     pacman_game = PacmanGameController()
     size = pacman_game.size

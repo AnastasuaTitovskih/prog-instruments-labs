@@ -48,6 +48,7 @@ class GameObject:
         self._shape = pygame.Rect(self.x, self.y, in_size, in_size)
 
     def draw(self):
+        logger.debug(f"Отрисовка GameObject в координатах ({self.x}, {self.y})")
         if self._circle:
             pygame.draw.circle(self._surface,
                                self._color,
@@ -61,6 +62,7 @@ class GameObject:
                              border_radius=1)
 
     def tick(self):
+        logger.debug("Вызов tick() для GameObject")
         pass
 
     def get_shape(self):
@@ -116,6 +118,7 @@ class GameRenderer:
         self._current_phase = 0
 
     def tick(self, in_fps: int):
+        logger.debug(f"Запуск игрового цикла с FPS={in_fps}")
         black = (0, 0, 0)
 
         self.handle_mode_switch()

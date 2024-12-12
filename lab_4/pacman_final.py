@@ -69,7 +69,7 @@ class GameObject:
         return pygame.Rect(self.x, self.y, self._size, self._size)
 
     def set_position(self, in_x, in_y):
-        logger.info(f"Изменение позиции GameObject на ({in_x}, {in_y})")
+        logger.info(f"GameObject ({self.__class__.__name__}) перемещен на позицию ({in_x}, {in_y})")
         self.x = in_x
         self.y = in_y
 
@@ -338,6 +338,7 @@ class Hero(MovableObject):
 
         if self.x > self._renderer._width:
             self.x = 0
+        logger.debug(f"Телепортация героя на противоположную сторону ({self.x}, {self.y})")
 
         self.last_non_colliding_position = self.get_position()
 
@@ -376,6 +377,7 @@ class Hero(MovableObject):
                 game_objects.remove(cookie)
                 self._renderer.add_score(ScoreType.COOKIE)
                 cookie_to_remove = cookie
+        logger.info(f"Герой подобрал печенье на позиции ({self.x}, {self.y}), текущий счет: {self._renderer._score}")
 
         if cookie_to_remove is not None:
             cookies.remove(cookie_to_remove)
@@ -390,6 +392,7 @@ class Hero(MovableObject):
                     game_objects.remove(powerup)
                     self._renderer.add_score(ScoreType.POWERUP)
                     self._renderer.activate_kokoro()
+        logger.info(f"Герой активировал бонус на позиции ({self.x}, {self.y})")
 
     def handle_ghosts(self):
         collision_rect = pygame.Rect(self.x, self.y, self._size, self._size)
@@ -401,9 +404,11 @@ class Hero(MovableObject):
                 if self._renderer.is_kokoro_active():
                     game_objects.remove(ghost)
                     self._renderer.add_score(ScoreType.GHOST)
+                    logger.info(f"Привидение съедено героем на позиции ({self.x}, {self.y}). Счет увеличен на {ScoreType.GHOST.value}")
                 else:
                     if not self._renderer.get_won():
                         self._renderer.kill_pacman()
+                        logger.warning(f"Герой столкнулся с привидением на позиции ({self.x}, {self.y}). Осталось жизней: {self._renderer._lives}")
 
     def draw(self):
         half_size = self._size / 2
@@ -423,6 +428,7 @@ class Ghost(MovableObject):
         if (self.x, self.y) == self.next_target:
             self.next_target = self.get_next_location()
         self.current_direction = self.calculate_direction_to_next_target()
+        logger.info(f"Привидение достигло цели на позиции ({self.x}, {self.y})")
 
     def set_new_path(self, in_path):
         for item in in_path:
@@ -551,7 +557,8 @@ class PacmanGameController:
                                random_space[0])
         test_path = [translate_maze_to_screen(item) for item in path]
         in_ghost.set_new_path(test_path)
-
+        logger.info(f"Случайный путь сгенерирован для привидения. Начальная точка: {current_maze_coord}, конечная точка: {random_space}")
+        
     def convert_maze_to_numpy(self):
         for x, row in enumerate(self.ascii_maze):
             self.size = (len(row), x + 1)
@@ -570,6 +577,7 @@ class PacmanGameController:
                         self.powerup_spaces.append((y, x))
 
             self.numpy_maze.append(binary_row)
+            logger.debug(f"Лабиринт успешно преобразован в numpy-массив. Размер: {self.size}")
 
 
 if __name__ == "__main__":

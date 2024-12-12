@@ -6,7 +6,10 @@ from enum import Enum
 
 
 class Direction(Enum):
-
+    """
+    Перечисление направлений движения.
+    Используется для управления движением объектов.
+    """
     DOWN = -90
     RIGHT = 0
     UP = 90
@@ -15,27 +18,57 @@ class Direction(Enum):
 
 
 class ScoreType(Enum):
-
+    """
+    Перечисление типов очков в игре.
+    Каждый тип имеет фиксированное значение.
+    """
     COOKIE = 10
     POWERUP = 50
     GHOST = 400
 
 
 class GhostBehaviour(Enum):
-
+    """
+    Перечисление режимов поведения привидений.
+    Используется для управления их состоянием в игре.
+    """
     CHASE = 1
     SCATTER = 2
 
 
 def translate_screen_to_maze(in_coords, in_size=32):
+    """
+    Преобразует экранные координаты в координаты лабиринта.
+
+    Параметры:
+    in_coords (tuple): Экранные координаты (x, y).
+    in_size (int): Размер клетки лабиринта (по умолчанию 32).
+
+    Возвращает:
+    tuple: Координаты в лабиринте.
+    """
     return int(in_coords[0] / in_size), int(in_coords[1] / in_size)
 
 
 def translate_maze_to_screen(in_coords, in_size=32):
+    """
+    Преобразует координаты лабиринта в экранные координаты.
+
+    Параметры:
+    in_coords (tuple): Координаты в лабиринте (x, y).
+    in_size (int): Размер клетки лабиринта (по умолчанию 32).
+
+    Возвращает:
+    tuple: Экранные координаты.
+    """
     return in_coords[0] * in_size, in_coords[1] * in_size
 
 
 class GameObject:
+    """
+    Базовый класс для игровых объектов.
+    Обеспечивает базовые функции, такие как отрисовка, управление позицией и формой.
+    """
 
     def __init__(self, in_surface, x, y,
                  in_size: int, in_color=(255, 0, 0),
@@ -50,6 +83,9 @@ class GameObject:
         self._shape = pygame.Rect(self.x, self.y, in_size, in_size)
 
     def draw(self):
+        """
+        Отрисовывает объект на экране.
+        """
         if self._circle:
             pygame.draw.circle(self._surface,
                                self._color,
@@ -63,27 +99,49 @@ class GameObject:
                              border_radius=1)
 
     def tick(self):
+        """
+        Обновляет состояние объекта. Переопределяется в дочерних классах.
+        """
         pass
 
     def get_shape(self):
         return pygame.Rect(self.x, self.y, self._size, self._size)
 
     def set_position(self, in_x, in_y):
+        """
+        Устанавливает новую позицию объекта.
+
+        Параметры:
+        in_x (int): Новая координата x.
+        in_y (int): Новая координата y.
+        """
         self.x = in_x
         self.y = in_y
 
     def get_position(self):
+        """
+        Возвращает текущую позицию объекта.
+
+        Возвращает:
+        tuple: Координаты (x, y).
+        """
         return (self.x, self.y)
 
 
 class Wall(GameObject):
-
+    """
+    Класс для представления стены в игровом мире.
+    Наследуется от GameObject.
+    """
     def __init__(self, in_surface, x, y, in_size: int, in_color=(0, 0, 255)):
         super().__init__(in_surface, x * in_size, y * in_size, in_size, in_color)
 
 
 class GameRenderer:
-
+    """
+    Основной класс рендера игры.
+    Управляет отрисовкой объектов, состоянием игры и событиями.
+    """
     def __init__(self, in_width: int, in_height: int):
         pygame.init()
         self._width = in_width
@@ -287,7 +345,10 @@ class GameRenderer:
 
 
 class MovableObject(GameObject):
-
+    """
+    Класс для движущихся объектов.
+    Расширяет функциональность GameObject, добавляя управление движением.
+    """
     def __init__(self, in_surface, x, y, in_size: int, in_color=(255, 0, 0), 
                  is_circle: bool = False):
         super().__init__(in_surface, x, y, in_size, in_color, is_circle)
@@ -302,6 +363,12 @@ class MovableObject(GameObject):
         return None if len(self.location_queue) == 0 else self.location_queue.pop(0)
 
     def set_direction(self, in_direction):
+        """
+        Устанавливает направление движения объекта.
+
+        Параметры:
+        in_direction (Direction): Новое направление движения.
+        """
         self.current_direction = in_direction
         self.direction_buffer = in_direction
 
@@ -333,6 +400,10 @@ class MovableObject(GameObject):
         pass
 
     def tick(self):
+        """
+        Обновляет состояние движущегося объекта.
+        Вызывается каждый игровой цикл для изменения позиции.
+        """
         self.reached_target()
         self.automatic_move(self.current_direction)
 
@@ -345,7 +416,10 @@ class MovableObject(GameObject):
 
 
 class Hero(MovableObject):
-
+    """
+    Класс главного героя игры.
+    Управляет движением, взаимодействием с объектами и состоянием героя.
+    """
     def __init__(self, in_surface, x, y, in_size: int):
         super().__init__(in_surface, x, y, in_size, (255, 255, 0), False)
         self.last_non_colliding_position = (0, 0)
@@ -356,6 +430,10 @@ class Hero(MovableObject):
 
 
     def tick(self):
+        """
+        Обновляет состояние героя.
+        Выполняет логику взаимодействия с игровым миром, включая проверку столкновений.
+        """
         # TELEPORT
         if self.x < 0:
             self.x = self._renderer._width
@@ -379,6 +457,10 @@ class Hero(MovableObject):
         self.handle_ghosts()
 
     def automatic_move(self, in_direction: Direction):
+        """
+        Выполняет автоматическое движение героя.
+        Используется для управления перемещением в заданном направлении.
+        """
         collision_result = self.check_collision_in_direction(in_direction)
 
         desired_position_collides = collision_result[0]
@@ -390,6 +472,10 @@ class Hero(MovableObject):
             self.current_direction = self.last_working_direction
 
     def handle_cookie_pickup(self):
+        """
+        Обрабатывает сбор печенья героем.
+        Увеличивает счет и удаляет собранное печенье с карты.
+        """
         collision_rect = pygame.Rect(self.x, self.y, self._size, self._size)
         cookies = self._renderer.get_cookies()
         powerups = self._renderer.get_powerups()
@@ -417,6 +503,10 @@ class Hero(MovableObject):
                     self._renderer.activate_kokoro()
 
     def handle_ghosts(self):
+        """
+        Обрабатывает столкновения героя с привидениями.
+        Реализует логику реакции на столкновение в зависимости от текущего состояния героя.
+        """
         collision_rect = pygame.Rect(self.x, self.y, self._size, self._size)
         ghosts = self._renderer.get_ghosts()
         game_objects = self._renderer.get_game_objects()
@@ -431,6 +521,10 @@ class Hero(MovableObject):
                         self._renderer.kill_pacman()
 
     def draw(self):
+        """
+        Отрисовывает героя на экране.
+        Использует текущую позицию и настройки для рендеринга.
+        """
         half_size = self._size / 2
         self.image = self.open if self.mouth_open else self.closed
         self.image = pygame.transform.rotate(self.image, 
@@ -439,7 +533,10 @@ class Hero(MovableObject):
 
 
 class Ghost(MovableObject):
-
+    """
+    Класс для привидений.
+    Управляет движением, взаимодействием с игровым миром и логикой поведения.
+    """
     def __init__(self, in_surface, x, y, in_size: int, in_game_controller, 
                  sprite_path="images/ghost_fright.png"):
         super().__init__(in_surface, x, y, in_size)
@@ -448,16 +545,34 @@ class Ghost(MovableObject):
         self.sprite_fright = pygame.image.load("images/ghost_fright.png")
 
     def reached_target(self):
+        """
+        Проверяет, достиг ли объект своей текущей цели.
+
+        Возвращает:
+        bool: True, если цель достигнута, иначе False.
+        """
         if (self.x, self.y) == self.next_target:
             self.next_target = self.get_next_location()
         self.current_direction = self.calculate_direction_to_next_target()
 
     def set_new_path(self, in_path):
+        """
+        Устанавливает новый путь для объекта.
+
+        Параметры:
+        path (list[tuple]): Список координат, представляющих путь.
+        """
         for item in in_path:
             self.location_queue.append(item)
         self.next_target = self.get_next_location()
 
     def calculate_direction_to_next_target(self) -> Direction:
+        """
+        Вычисляет направление движения к следующей точке пути.
+
+        Возвращает:
+        Direction: Направление к следующей точке.
+        """
         if self.next_target is None:
             if self._renderer.get_current_mode() == GhostBehaviour.CHASE \
                 and not self._renderer.is_kokoro_active():
@@ -481,6 +596,12 @@ class Ghost(MovableObject):
         return Direction.NONE
 
     def request_path_to_player(self, in_ghost):
+        """
+        Запрашивает вычисление пути от текущей позиции до игрока.
+
+        Параметры:
+        player_position (tuple): Координаты игрока (x, y).
+        """
         player_position = translate_screen_to_maze(
             in_ghost._renderer.get_hero_position())
         current_maze_coord = translate_screen_to_maze(in_ghost.get_position())
@@ -493,6 +614,10 @@ class Ghost(MovableObject):
         in_ghost.set_new_path(new_path)
 
     def automatic_move(self, in_direction: Direction):
+        """
+        Выполняет автоматическое движение объекта.
+        Используется для следования по заданному пути.
+        """
         if in_direction == Direction.UP:
             self.set_position(self.x, self.y - 1)
         elif in_direction == Direction.DOWN:
@@ -507,19 +632,28 @@ class Ghost(MovableObject):
         super(Ghost, self).draw()
 
 class Cookie(GameObject):
-
+    """
+    Класс для представления печенья.
+    Печенье — основной источник очков для игрока.
+    """
     def __init__(self, in_surface, x, y):
         super().__init__(in_surface, x, y, 4, (255, 255, 0), True)
 
 
 class Powerup(GameObject):
-
+    """
+    Класс для бонусов в игре.
+    Бонусы дают временные способности.
+    """
     def __init__(self, in_surface, x, y):
         super().__init__(in_surface, x, y, 8, (255, 255, 255), True)
 
 
 class Pathfinder:
-    
+    """
+    Класс для поиска пути в лабиринте.
+    Использует библиотеку tcod для расчета оптимального пути.
+    """    
     def __init__(self, in_arr):
         cost = np.array(in_arr, dtype=np.bool_).tolist()
         self.pf = tcod.path.AStar(cost=cost, diagonal=0)
@@ -530,7 +664,10 @@ class Pathfinder:
 
 
 class PacmanGameController:
-    
+    """
+    Класс управления игровой логикой.
+    Отвечает за создание игрового мира, управление игровым процессом и поведение объектов.
+    """    
     def __init__(self):
         self.ascii_maze = [
             'XXXXXXXXXXXXXXXXXXXXXXXXXXXX',
@@ -582,6 +719,15 @@ class PacmanGameController:
         self.p = Pathfinder(self.numpy_maze)
 
     def request_new_random_path(self, in_ghost: Ghost):
+        """
+        Запрашивает случайный путь для объекта в лабиринте.
+
+        Параметры:
+        start (tuple): Координаты начальной точки (x, y).
+
+        Возвращает:
+        list[tuple]: Список координат, представляющих случайный путь.
+        """
         random_space = random.choice(self.reachable_spaces)
         current_maze_coord = translate_screen_to_maze(in_ghost.get_position())
 
@@ -591,6 +737,14 @@ class PacmanGameController:
         in_ghost.set_new_path(test_path)
 
     def convert_maze_to_numpy(self):
+        """
+        Конвертирует лабиринт в формат numpy-массива.
+
+        Используется для удобства обработки данных и совместимости с алгоритмами поиска пути.
+
+        Возвращает:
+        numpy.ndarray: Представление лабиринта в формате массива.
+        """
         for x, row in enumerate(self.ascii_maze):
             self.size = (len(row), x + 1)
             binary_row = []
